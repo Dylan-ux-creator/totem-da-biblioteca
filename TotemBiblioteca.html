@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Biblioteca Escolar</title>
+  <style>
+    :root {
+      --primary: #007ACC;
+      --light-blue: #e6f3fc;
+      --background: #f0f8ff;
+      --text: #333;
+      --white: #ffffff;
+    }
+
+    body {
+      background-color: #cde6f7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      font-size: 16px;
+    }
+
+    .totem {
+      background-color: #000;
+      border-radius: 30px;
+      width: 900px;
+      height: 600px;
+      padding: 16px;
+      box-shadow: 0 0 40px rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .screen {
+      background-color: var(--background);
+      border-radius: 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    header {
+      background-color: var(--primary);
+      color: white;
+      padding: 8px 10px;
+      text-align: center;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      font-size: 1.2em;
+    }
+
+    header h2 {
+      margin: 0;
+      font-weight: 600;
+    }
+
+    header p {
+      margin: 2px 0 6px;
+      font-size: 0.95em;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      background-color: var(--light-blue);
+      gap: 12px;
+      padding: 10px;
+    }
+
+    nav button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1.1em;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    nav button:hover {
+      background-color: #005fa3;
+    }
+
+    .content {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .section {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      font-size: 1.05em;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 1em;
+      margin-top: 10px;
+      background: var(--white);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #d3ecff;
+      color: #003f66;
+      font-weight: 600;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f5faff;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      font-size: 0.95em;
+    }
+
+    li {
+      padding: 8px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .form-box {
+      margin-top: 12px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+      margin-bottom: 12px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 60px;
+      resize: none;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+    }
+
+    button.submit {
+      margin-top: 8px;
+      width: 100%;
+      background-color: var(--primary);
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background 0.3s ease;
+    }
+
+    button.submit:hover {
+      background-color: #005fa3;
+    }
+
+    #msg {
+      font-size: 0.9em;
+      margin-top: 5px;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.85em;
+      padding: 6px;
+      color: #555;
+      background-color: #f5f5f5;
+      border-top: 1px solid #ccc;
+    }
+
+    /* Scrollbar estilizado */
+    .section::-webkit-scrollbar {
+      width: 8px;
+    }
+    .section::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+    }
+    .section::-webkit-scrollbar-thumb {
+      background: #007ACC;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="totem">
+    <div class="screen">
+      <header>
+        <h2>Biblioteca Escolar</h2>
+        <p>Toque para navegar</p>
+      </header>
+
+      <nav>
+        <button onclick="show('livros')">Livros Disponíveis</button>
+        <button onclick="show('emprestimos')">Seus Empréstimos</button>
+        <button onclick="show('solicitacoes')">Solicitações</button>
+      </nav>
+
+      <div class="content">
+        <!-- LIVROS -->
+        <div id="livros" class="section">
+          <h3>Catálogo de Livros</h3>
+          <input type="text" id="searchBook" onkeyup="searchBooks()" placeholder="Pesquisar livro pelo título..." />
+
+          <table id="booksTable">
+            <thead>
+              <tr>
+                <th>Título</th>
+                <th>Autor</th>
+                <th>Disponível</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Dom Casmurro</td><td>Machado de Assis</td><td>Sim</td></tr>
+              <tr><td>O Pequeno Príncipe</td><td>Antoine de Saint-Exupéry</td><td>Não</td></tr>
+              <tr><td>1984</td><td>George Orwell</td><td>Sim</td></tr>
+              <tr><td>Memórias Póstumas de Brás Cubas</td><td>Machado de Assis</td><td>Sim</td></tr>
+              <tr><td>O Hobbit</td><td>J.R.R. Tolkien</td><td>Sim</td></tr>
+              <tr><td>A Revolução dos Bichos</td><td>George Orwell</td><td>Sim</td></tr>
+              <tr><td>Capitães da Areia</td><td>Jorge Amado</td><td>Não</td></tr>
+              <tr><td>Harry Potter e a Pedra Filosofal</td><td>J.K. Rowling</td><td>Sim</td></tr>
+              <tr><td>Dom Quixote</td><td>Miguel de Cervantes</td><td>Sim</td></tr>
+              <tr><td>O Alquimista</td><td>Paulo Coelho</td><td>Sim</td></tr>
+              <tr><td>O Senhor dos Anéis</td><td>J.R.R. Tolkien</td><td>Não</td></tr>
+              <tr><td>As Crônicas de Nárnia</td><td>C.S. Lewis</td><td>Sim</td></tr>
+              <tr><td>O Morro dos Ventos Uivantes</td><td>Emily Brontë</td><td>Sim</td></tr>
+              <tr><td>Grande Sertão: Veredas</td><td>João Guimarães Rosa</td><td>Não</td></tr>
+              <tr><td>Crime e Castigo</td><td>Fiódor Dostoiévski</td><td>Sim</td></tr>
+              <tr><td>Jane Eyre</td><td>Charlotte Brontë</td><td>Sim</td></tr>
+              <tr><td>O Guia do Mochileiro das Galáxias</td><td>Douglas Adams</td><td>Sim</td></tr>
+              <tr><td>O Diário de Anne Frank</td><td>Anne Frank</td><td>Sim</td></tr>
+              <tr><td>O Conto da Aia</td><td>Margaret Atwood</td><td>Sim</td></tr>
+              <tr><td>O Pequeno Príncipe (Edição Ilustrada)</td><td>Antoine de Saint-Exupéry</td><td>Sim</td></tr>
+              <tr><td>A Menina que Roubava Livros</td><td>Markus Zusak</td><td>Sim</td></tr>
+              <tr><td>O Código Da Vinci</td><td>Dan Brown</td><td>Não</td></tr>
+              <tr><td>O Velho e o Mar</td><td>Ernest Hemingway</td><td>Sim</td></tr>
+              <tr><td>O Pequeno Príncipe (Edição Especial)</td><td>Antoine de Saint-Exupéry</td><td>Sim</td></tr>
+              <tr><td>Os Miseráveis</td><td>Victor Hugo</td><td>Sim</td></tr>
+              <tr><td>A Moreninha</td><td>Joaquim Manuel de Macedo</td><td>Sim</td></tr>
+              <tr><td>O Perfume</td><td>Patrick Süskind</td><td>Sim</td></tr>
+              <tr><td>O Hobbit (Edição de Luxo)</td><td>J.R.R. Tolkien</td><td>Não</td></tr>
+              <tr><td>A Cabana</td><td>William P. Young</td><td>Sim</td></tr>
+              <tr><td>O Senhor dos Anéis (Edição Estendida)</td><td>J.R.R. Tolkien</td><td>Sim</td></tr>
+              <tr><td>O Código Da Vinci (Edição Especial)</td><td>Dan Brown</td><td>Sim</td></tr>
+              <tr><td>Os Contos de Edgar Allan Poe</td><td>Edgar Allan Poe</td><td>Sim</td></tr>
+              <tr><td>Dom Casmurro (Edição Especial)</td><td>Machado de Assis</td><td>Sim</td></tr>
+              <tr><td>A Revolução dos Bichos (Edição Ilustrada)</td><td>George Orwell</td><td>Sim</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- EMPRÉSTIMOS -->
+        <div id="emprestimos" class="section hidden">
+          <h3>Seus Empréstimos</h3>
+          <ul id="emprestimosList">
+            <li><strong>Dom Casmurro</strong> - Machado de Assis (Data de devolução: 25/09/2025)</li>
+            <li><strong>O Hobbit</strong> - J.R.R. Tolkien (Data de devolução: 02/10/2025)</li>
+            <li><strong>O Pequeno Príncipe</strong> — Antoine de Saint-Exupéry</li>
+            <li><strong>Harry Potter e a Pedra Filosofal</strong> — J.K. Rowling</li>
+          </ul>
+        </div>
+
+        <!-- SOLICITAÇÕES -->
+        <div id="solicitacoes" class="section hidden">
+          <h3>Solicitar Livro</h3>
+          <div class="form-box">
+            <label for="nomeAluno">Nome do Aluno:</label><br>
+            <input type="text" id="nomeAluno" placeholder="Seu nome" />
+            <label for="nomeLivro">Nome do Livro:</label><br>
+            <input type="text" id="nomeLivro" placeholder="Nome do livro que deseja solicitar" />
+            <label for="justificativa">Justificativa:</label><br>
+            <textarea id="justificativa" placeholder="Por que deseja este livro?"></textarea>
+            <button class="submit" onclick="enviarSolicitacao()">Enviar Solicitação</button>
+            <p id="msgSolicitacao"></p>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        &copy; 2025 Biblioteca Escolar
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    function show(sectionId) {
+      const sections = document.querySelectorAll('.section');
+      sections.forEach(sec => sec.classList.add('hidden'));
+      document.getElementById(sectionId).classList.remove('hidden');
+      document.getElementById('msgSolicitacao').innerText = '';
+    }
+
+    function searchBooks() {
+      const input = document.getElementById('searchBook');
+      const filter = input.value.toLowerCase();
+      const table = document.getElementById('booksTable');
+      const tr = table.getElementsByTagName('tr');
+
+      for (let i = 1; i < tr.length; i++) {
+        let tdTitle = tr[i].getElementsByTagName('td')[0];
+        if (tdTitle) {
+          let txtValue = tdTitle.textContent || tdTitle.innerText;
+          if (txtValue.toLowerCase().indexOf(filter) > -1) {
+            tr[i].style.display = '';
+          } else {
+            tr[i].style.display = 'none';
+          }
+        }
+      }
+    }
+
+    function enviarSolicitacao() {
+      const nomeAluno = document.getElementById('nomeAluno').value.trim();
+      const nomeLivro = document.getElementById('nomeLivro').value.trim();
+      const justificativa = document.getElementById('justificativa').value.trim();
+      const msg = document.getElementById('msgSolicitacao');
+
+      if (nomeAluno && nomeLivro && justificativa) {
+        msg.style.color = 'green';
+        msg.innerText = '✔ Solicitação enviada com sucesso!';
+        document.getElementById('nomeAluno').value = '';
+        document.getElementById('nomeLivro').value = '';
+        document.getElementById('justificativa').value = '';
+      } else {
+        msg.style.color = 'red';
+        msg.innerText = 'Por favor, preencha todos os campos antes de enviar.';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      show('livros');
+    });
+  </script>
+
+</body>
+</html>
